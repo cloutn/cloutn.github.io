@@ -104,4 +104,4 @@ theme: landscape
 deploy:
   type: git
   repo: https://github.com/cloutn/cloutn.github.io
-  branch: master
+  branch: main
