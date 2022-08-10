@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css" integrity="sha256-xejo6yLi6vGtAjcMIsY8BHdKsLg7QynVlFMzdQgUuy8=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"cloutn.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.12.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="在 ue4 中，地形 paint 的时候可以选择 material 上设置好的 layer，如下所示：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="UE4 中的 Edit Layer 原理">
+<meta property="og:url" content="https://cloutn.github.io/2022/08/10/ue4_edit_layer/index.html">
+<meta property="og:site_name" content="cloutn">
+<meta property="og:description" content="在 ue4 中，地形 paint 的时候可以选择 material 上设置好的 layer，如下所示：">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cloutn.github.io/images/2022-08-10-17-26-27-image.png">
+<meta property="og:image" content="https://cloutn.github.io/images/2022-08-10-17-28-05-image.png">
+<meta property="og:image" content="https://cloutn.github.io/images/2022-08-10-17-30-17-image.png">
+<meta property="article:published_time" content="2022-08-10T09:52:16.501Z">
+<meta property="article:modified_time" content="2022-08-10T09:52:16.501Z">
+<meta property="article:author" content="cloutn">
+<meta property="article:tag" content="ue4">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cloutn.github.io/images/2022-08-10-17-26-27-image.png">
+
+
+<link rel="canonical" href="https://cloutn.github.io/2022/08/10/ue4_edit_layer/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://cloutn.github.io/2022/08/10/ue4_edit_layer/","path":"2022/08/10/ue4_edit_layer/","title":"UE4 中的 Edit Layer 原理"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>UE4 中的 Edit Layer 原理 | cloutn</title>
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">cloutn</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">cl as outsider</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-overview-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">cloutn</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">1</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://cloutn.github.io/2022/08/10/ue4_edit_layer/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="cloutn">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="cloutn">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="UE4 中的 Edit Layer 原理 | cloutn">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          UE4 中的 Edit Layer 原理
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-08-10 17:52:16" itemprop="dateCreated datePublished" datetime="2022-08-10T17:52:16+08:00">2022-08-10</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>在 ue4 中，地形 paint 的时候可以选择 material 上设置好的 layer，如下所示：</p>
+<p><img src="/images/2022-08-10-17-26-27-image.png"></p>
+<span id="more"></span>
+
+<p>按照文档可以对 landscape 开启 Edit Layer</p>
+<p><a target="_blank" rel="noopener" href="https://docs.unrealengine.com/4.27/en-US/BuildingWorlds/Landscape/Layers/">Landscape Edit Layers | Unreal Engine Documentation</a></p>
+<p><img src="/images/2022-08-10-17-28-05-image.png"></p>
+<p>开启后，在对地形 paint 的时候，可以先选择使用的 target layer，同时还可以指定当前 brush 使用哪一个 Edit Layer</p>
+<p><img src="/images/2022-08-10-17-30-17-image.png"></p>
+<p>当我们将 Edit Layer 设置为 visible 或者 hide 的时候，其所使用的 brush 的内容也会被取消掉。</p>
+<p>在代码中，Edit Layer 对应的类是</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">FLandscapeLayer</span></span><br><span class="line">&#123;</span><br><span class="line">    ...</span><br><span class="line">	TArray&lt;FLandscapeLayerBrush&gt; Brushes;    </span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>编辑时 brush 信息储存在 Brushes 变量中。</p>
+<p>class ALandscape 类中有一个 FLandscapeLayer 数组，就是为了保存 Edit Layer 刷子信息的。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">ALandscape</span> : <span class="keyword">public</span> ALandscapeProxy</span><br><span class="line">&#123;</span><br><span class="line">...</span><br><span class="line">    TArray&lt;FLandscapeLayer&gt; LandscapeLayers;</span><br><span class="line">...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>当我们修改了 Edit Layer 的属性后，比如 set visible 或者刷了新的数据，会触发</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">int32 <span class="title">ALandscape::RegenerateLayersWeightmaps</span><span class="params">(...)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>在这个函数中，会用 Computer Shader 将 brush 中的数据拷贝到实际的 Target Layer 的数据中。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">PrepareComponentDataToExtractMaterialLayersCS</span>(</span><br><span class="line">    InLandscapeComponentsToRender, </span><br><span class="line">    Layer, </span><br><span class="line">    CurrentWeightmapToProcessIndex, </span><br><span class="line">    LandscapeExtent.Min, </span><br><span class="line">    OutputDebugName, </span><br><span class="line">    WeightmapScratchExtractLayerTextureResource, </span><br><span class="line">    ComponentsData, </span><br><span class="line">    LayerInfoObjects);</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<p>从 Edit Layer 中读取数据的地方就在这个函数的这里：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (ULandscapeComponent* Component : InLandscapeComponents)</span><br><span class="line">&#123;</span><br><span class="line">	FLandscapeLayerComponentData* ComponentLayerData = Component-&gt;<span class="built_in">GetLayerData</span>(InLayer.Guid);</span><br><span class="line">	<span class="keyword">if</span> (ComponentLayerData != <span class="literal">nullptr</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">if</span> (ComponentLayerData-&gt;WeightmapData.Textures.<span class="built_in">IsValidIndex</span>(InCurrentWeightmapToProcessIndex) &amp;&amp; ComponentLayerData-&gt;WeightmapData.TextureUsages.<span class="built_in">IsValidIndex</span>(InCurrentWeightmapToProcessIndex))</span><br><span class="line">		&#123;</span><br><span class="line">			UTexture2D* LayerWeightmap = ComponentLayerData-&gt;WeightmapData.Textures[InCurrentWeightmapToProcessIndex];</span><br></pre></td></tr></table></figure>
+
+<p>LayerWeightmap 就是在 Edit Layer 中刷的数据。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/ue4/" rel="tag"># ue4</a>
+          </div>
+
+        
+
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-terminal"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">cloutn</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>
