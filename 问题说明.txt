@@ -1,0 +1,3 @@
+解决方法：npm i hexo-renderer-swig
+原因：hexo在5.0之后把swig给删除了需要自己手动安装
+如果有什么问题可以加hexo的QQ群，我就是在qq群里问，有人帮忙解决的。
