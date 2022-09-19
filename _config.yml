@@ -107,3 +107,7 @@ deploy:
   type: git
   repo: https://github.com/cloutn/cloutn.github.io
   branch: gh-pages
+
+sitemap:
+path: sitemap.xml      
+
