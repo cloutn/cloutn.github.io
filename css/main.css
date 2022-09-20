@@ -1118,11 +1118,11 @@ header.header {
 }
 .header-inner {
   margin: 0 auto;
-  width: 500px;
+  width: calc(100% - 20px);
 }
 @media (min-width: 1200px) {
   .header-inner {
-    width: 700px;
+    width: 1160px;
   }
 }
 @media (min-width: 1600px) {
@@ -1560,11 +1560,11 @@ header.header {
   flex-direction: column;
   justify-content: center;
   margin: 0 auto;
-  width: 500px;
+  width: calc(100% - 20px);
 }
 @media (min-width: 1200px) {
   .footer-inner {
-    width: 700px;
+    width: 1160px;
   }
 }
 @media (min-width: 1600px) {
@@ -2474,6 +2474,26 @@ ul.breadcrumb li:last-child {
 .gt-container .gt-popup .gt-action.is--active::before {
   top: 0.7em;
 }
+.gt-container .gt-header-textarea {
+  adding: 0.75em;
+  display: block;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 5.125em;
+  max-height: 15em;
+  border-radius: 5px;
+  border: 1px solid rgba(0,0,0,0.1);
+  font-size: 0.875em;
+  overflow-wrap: break-word;
+  resize: vertical;
+  background-color: #f6f6f6;
+  outline: none;
+  -webkit-transition: all 0.25s ease;
+  transition: all 0.25s ease;
+/* add */
+  color: #000;
+}
 .use-motion .animated {
   animation-fill-mode: none;
   visibility: inherit;
@@ -2498,11 +2518,11 @@ ul.breadcrumb li:last-child {
   display: flex;
   justify-content: space-between;
   margin: 0 auto;
-  width: 500px;
+  width: calc(100% - 20px);
 }
 @media (min-width: 1200px) {
   .main {
-    width: 700px;
+    width: 1160px;
   }
 }
 @media (min-width: 1600px) {
