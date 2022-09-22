@@ -167,7 +167,7 @@ NexT.utils = {
     // Binding `nav-tabs` & `tab-content` by real time permalink changing.
     document.querySelectorAll('.tabs ul.nav-tabs .tab').forEach(element => {
       element.addEventListener('click', event => {
-        //event.preventDefault();
+        event.preventDefault();
         // Prevent selected tab to select again.
         if (element.classList.contains('active')) return;
         const nav = element.parentNode;
@@ -185,8 +185,7 @@ NexT.utils = {
           bubbles: true
         }));
         if (!CONFIG.stickytabs) return;
-        //const offset = nav.parentNode.getBoundingClientRect().top + window.scrollY + 10;
-        const offset = 0;
+        const offset = nav.parentNode.getBoundingClientRect().top + window.scrollY + 10;
         window.anime({
           targets  : document.scrollingElement,
           duration : 500,
@@ -238,9 +237,8 @@ NexT.utils = {
       const target = document.getElementById(decodeURI(element.getAttribute('href')).replace('#', ''));
       // TOC item animation navigate.
       element.addEventListener('click', event => {
-        //event.preventDefault();
-        // const offset = target.getBoundingClientRect().top + window.scrollY;
-        const offset = 0;
+        event.preventDefault();
+        const offset = target.getBoundingClientRect().top + window.scrollY;
         window.anime({
           targets  : document.scrollingElement,
           duration : 500,
@@ -283,8 +281,7 @@ NexT.utils = {
       targets  : tocElement,
       duration : 200,
       easing   : 'linear',
-      //scrollTop: tocElement.scrollTop - (tocElement.offsetHeight / 2) + target.getBoundingClientRect().top - tocElement.getBoundingClientRect().top
-      scrollTop: 0
+      scrollTop: tocElement.scrollTop - (tocElement.offsetHeight / 2) + target.getBoundingClientRect().top - tocElement.getBoundingClientRect().top
     });
   },
 
