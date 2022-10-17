@@ -9,7 +9,8 @@ tags: tool
 1. 安装 hexo。（如果已安装，可以跳过这一步）
    - 先安装 NodeJs （内置 npm 工具）和 git 工具
    - 命令行运行 $ npm install -g hexo-cli 安装 hexo
-
+   - 安装 swig 渲染器 $ npm i hexo-renderer-swig
+   
 2. check out https://github.com/cloutn/cloutn.github.io.git ， 并切换分支到 master
 
 3. 打开 source\_posts 目录，用 typora 软件编辑 md 文件
