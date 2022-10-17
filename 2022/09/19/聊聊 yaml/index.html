@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css" integrity="sha256-xejo6yLi6vGtAjcMIsY8BHdKsLg7QynVlFMzdQgUuy8=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"cloutn.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.12.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"stickytabs":false,"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="最近确定了引擎的场景文件的格式为 yaml，配置文件也会考虑使用 yaml，不过仍然会保留对 scl 内部的简单 ini 文件的支持。所以想聊聊为什么做出这个选择，以及 yaml 的优势和劣势。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="聊聊 yaml">
+<meta property="og:url" content="https://cloutn.github.io/2022/09/19/%E8%81%8A%E8%81%8A%20yaml/index.html">
+<meta property="og:site_name" content="cloutn">
+<meta property="og:description" content="最近确定了引擎的场景文件的格式为 yaml，配置文件也会考虑使用 yaml，不过仍然会保留对 scl 内部的简单 ini 文件的支持。所以想聊聊为什么做出这个选择，以及 yaml 的优势和劣势。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-09-19T09:34:09.754Z">
+<meta property="article:modified_time" content="2022-09-19T10:11:52.923Z">
+<meta property="article:author" content="cloutn">
+<meta property="article:tag" content="engine">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://cloutn.github.io/2022/09/19/%E8%81%8A%E8%81%8A%20yaml/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://cloutn.github.io/2022/09/19/%E8%81%8A%E8%81%8A%20yaml/","path":"2022/09/19/聊聊 yaml/","title":"聊聊 yaml"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>聊聊 yaml | cloutn</title>
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">cloutn</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">cl as outsider</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-overview-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">cloutn</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">7</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://cloutn.github.io/2022/09/19/%E8%81%8A%E8%81%8A%20yaml/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="cloutn">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="cloutn">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="聊聊 yaml | cloutn">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          聊聊 yaml
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2022-09-19 17:34:09 / 修改时间：18:11:52" itemprop="dateCreated datePublished" datetime="2022-09-19T17:34:09+08:00">2022-09-19</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>最近确定了引擎的场景文件的格式为 yaml，配置文件也会考虑使用 yaml，不过仍然会保留对 scl 内部的简单 ini 文件的支持。所以想聊聊为什么做出这个选择，以及 yaml 的优势和劣势。</p>
+<span id="more"></span>
+
+<p>cat 渲染器的场景结构需要保存为一个文件格式，我希望这个格式可以满足如下的一些点：</p>
+<ul>
+<li>支持层级结构</li>
+<li>人类可读，并易于手动编辑</li>
+<li>足够紧凑</li>
+<li>有健壮的解析器</li>
+</ul>
+<p>之前在做 cat ui 的时候，ui 的窗口文件也需要类似这样一个文件格式，当时我的选择不多，只有 json 和 xml。由于受到魔兽世界的 ui  wow interface 的影响，也选择了 xml 作为窗口的描述文件，并且还有一个描述窗口加载顺序的 toc 类型的自定义文件。</p>
+<p>现在看来，魔兽的这些选择可能基于十几年前并不丰富的数据格式经验。随着行业发展，尤其是 web 的开发对更精巧可用的文件格式的需求，推动了数据格式的创新。</p>
+<p>下面是 wiki 上一个目前几乎所有的序列化文件格式的列表和特性对比：</p>
+<p><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Comparison_of_data-serialization_formats">Comparison of data-serialization formats</a></p>
+<p>作为对 xml 的不足的一些补充，业界最常用和成熟的 yaml 和 json 进入了我的视野。yaml 是因为 unity 的广泛使用被我熟知，但是其实 yaml 在 web 的很多领域都有大量的使用。json 就不用说了，发展的很成熟了已经。所以我最终要在这三者之间找到最适合我的数据格式。</p>
+<p>其实选择原因也不难，google 一下 yaml vs json，或者 xml vs json，xml vs yaml，能找到一大票的文章来谈优缺点，xml 对我而言不够简洁，而且在复杂项目中，也很难用手配置，所以首先出局了。json 的大量括号也不够紧凑，所以我最终更倾向于 yaml。</p>
+<p>在选定了 yaml 之后，我发现不少人提到了他和 toml 的对比，toml 是一个类似 ini 的文件格式，也符合一些条件，但是当树形结构复杂之后，会存在不少问题。</p>
+<p>当然，yaml 和 toml 以及 json 相比，有个致命的缺陷，就是解析器太复杂太难以实现了。并且，从实施的角度看，yaml 官网推荐的几个 c&#x2F;c++ 解析器都不大好用，基本上和我们常用的 xml 或者 json 的解析器的 api 设计差别很大，概念上也难于理解。</p>
+<p>下面是官方的几个解析库：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">YAML Frameworks and Tools:</span></span><br><span class="line">  <span class="string">C/C++:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">libfyaml</span>      <span class="comment"># &quot;C&quot; YAML 1.2 processor (YTS)</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">libyaml</span>       <span class="comment"># &quot;C&quot; Fast YAML 1.1 (YTS)</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">libcyaml</span>      <span class="comment"># YAML de/serialization of C data (using libyaml)</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">yaml-cpp</span>      <span class="comment"># C++ YAML 1.2 implementation</span></span><br></pre></td></tr></table></figure>
+
+<p>我最终在尝试了几天之后，放弃了这些解析器，转而使用一个不太成熟但是更易用的解析器：<a target="_blank" rel="noopener" href="https://github.com/biojppm/rapidyaml">rapidyaml</a></p>
+<p>这个解析器有着和 pugixml 类似的友好的接口设计，并且内部没有使用 STL，所以无需担心内存碎片和头文件膨胀问题。</p>
+<p>当然，打开代码会发现，这个项目还没有完成，属于基本可用，但是扩展功能不完善的状态，这个项目是2020年左右的项目，第一个 release 是2020年的11月3日发布的，可能成熟的版本是2021年才发布，所以还不到一年时间，需要再等待作者开发一段时间稳定下来。</p>
+<p>最后，我们看看作者写在项目的 readme 的一段话，就能体会到寻找一个好用的 yaml 的 c&#x2F;c++ 解析器有多难了：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Alternative libraries</span><br><span class="line">Why this library? Because none of the existing libraries was quite what I wanted. When I started this project in 2018, I was aware of these two alternative C/C++ libraries:</span><br><span class="line"></span><br><span class="line">libyaml. This is a bare C library. It does not create a representation of the data tree, so I don&#x27;t see it as practical. My initial idea was to wrap parsing and emitting around libyaml&#x27;s convenient event handling, but to my surprise I found out it makes heavy use of allocations and string duplications when parsing. I briefly pondered on sending PRs to reduce these allocation needs, but not having a permanent tree to store the parsed data was too much of a downside.</span><br><span class="line">yaml-cpp. This library may be full of functionality, but is heavy on the use of node-pointer-based structures like std::map, allocations, string copies, polymorphism and slow C++ stream serializations. This is generally a sure way of making your code slower, and strong evidence of this can be seen in the benchmark results above.</span><br><span class="line">Recently libfyaml appeared. This is a newer C library, fully conformant to the YAML standard with an amazing 100% success in the test suite; it also offers the tree as a data structure. As a downside, it does not work in Windows, and it is also multiple times slower parsing and emitting.</span><br><span class="line"></span><br><span class="line">When performance and low latency are important, using contiguous structures for better cache behavior and to prevent the library from trampling caches, parsing in place and using non-owning strings is of central importance. Hence this Rapid YAML library which, with minimal compromise, bridges the gap from efficiency to usability. This library takes inspiration from RapidJSON and RapidXML.</span><br></pre></td></tr></table></figure>
+
+<p>大意是：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">为啥我开发这个 yaml 库？因为现有的 yaml 库都不好用。项目从2018年开始开发，最初我关注了两个库：</span><br><span class="line"></span><br><span class="line">libyaml：一个纯c库，paring 和 emmiting 都是基于 event 机制，难于理解，没有一个树形的数据结构表达。并且内存策略糟糕，大量字符串内存拷贝。</span><br><span class="line"></span><br><span class="line">yaml-cpp: 有树形数据表达，能满足需求，但是重度使用 std::map,字符串拷贝等内存使用也很随意，还用了效率低下的 c++ stream。</span><br><span class="line"></span><br><span class="line">最近还有个库 libfyaml，这是一个新的 yaml 解析库，对 yaml 标准的支持非常的好，能达到100%通过官方 test suit。也有一个树形的数据结构表达。</span><br><span class="line">但是这个库完全不支持 Windows。</span><br><span class="line"></span><br><span class="line">当性能和延迟比较重要的时候，我们需要考虑cache效率，希望 rapidyaml 能达到 rapidJson 和 rapidxml 的水平。</span><br></pre></td></tr></table></figure>
+
+<p>其中无奈，可见一斑  ┐(—__—)┌</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/engine/" rel="tag"># engine</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/09/19/vulkan%20%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%9A%20swapchain%20and%20render%20pass/" rel="prev" title="vulkan 学习笔记： swapchain and render pass">
+                  <i class="fa fa-chevron-left"></i> vulkan 学习笔记： swapchain and render pass
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/09/22/subpass%20dependency/" rel="next" title="subpass dependency 摘录">
+                  subpass dependency 摘录 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments gitalk-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-terminal"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">cloutn</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/gitalk/1.7.2/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"cloutn","repo":"cloutn.github.io","client_id":"37d80a51d517876fdbe3","client_secret":"1e324de4b3bae0c30572e62ccf4ea678fee2872e","admin_user":"cloutn","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/gitalk/1.7.2/gitalk.min.js","integrity":"sha256-Pmj85ojLaPOWwRtlMJwmezB/Qg8BzvJp5eTzvXaYAfA="},"path_md5":"45127971992cbcc23c6068874d058ee6"}</script>
+<script src="/js/third-party/comments/gitalk.js"></script>
+
+</body>
+</html>
