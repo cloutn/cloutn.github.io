@@ -117,7 +117,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">6</span>
+          <span class="site-state-item-count">7</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -151,6 +151,83 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://cloutn.github.io/2022/10/17/Houdini%20%E5%92%8C%20UE%20%E5%9C%B0%E5%BD%A2%E9%AB%98%E5%BA%A6%E4%B9%8B%E9%97%B4%E5%85%B3%E7%B3%BB/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="cloutn">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="cloutn">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | cloutn">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/10/17/Houdini%20%E5%92%8C%20UE%20%E5%9C%B0%E5%BD%A2%E9%AB%98%E5%BA%A6%E4%B9%8B%E9%97%B4%E5%85%B3%E7%B3%BB/" class="post-title-link" itemprop="url">Houdini 和 UE 地形高度之间关系</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-10-17 16:05:27" itemprop="dateCreated datePublished" datetime="2022-10-17T16:05:27+08:00">2022-10-17</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>当我们使用 Houdini 和 UE 制作地形的时候，经常需要把 UE 中的 Landscape 数据导入为 Houdini 中的 Height Field 数据。这个双向的过程往往通过 Houdini Engine for Unreal 插件就能很好的完成。</p>
+<p>但是某些情况下，我们需要从 UE 导出高度图到其他某个软件（如GAEA）中进行处理，处理后再导出为高度图导入到 Houdini 中，这个过程，就需要我们从 UE 导出为高度图 PNG 文件，再从 PNG 文件导入到 Houdini 中。如果 XZ 尺寸严格按照 UE 和 Houdini 文档设定，往往是没有问题的，但是高度在 UE 和 Houdini 中的定义是不同的，这就要求我们了解 UE 和 Houdini 导出到高度图的时候，具体是如何处理高度的。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/10/17/Houdini%20%E5%92%8C%20UE%20%E5%9C%B0%E5%BD%A2%E9%AB%98%E5%BA%A6%E4%B9%8B%E9%97%B4%E5%85%B3%E7%B3%BB/">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
